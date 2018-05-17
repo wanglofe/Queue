@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _DEBUG
+#define DEBUG(fmt, arg...) printf(fmt, ##arg)
+#else
+#define DEBUG(fmt, arg...)
+#endif
+
 #define QUEUE_FULL	-1
 #define QUEUE_EMPTY	-9999
 
@@ -17,7 +23,7 @@ static sll_t *header = NULL;
 static sll_t *rear = NULL;
 static size_t m_queue_length = 0;
 
-// hander declarations
+// handler declarations
 int	queue_insert(queue_t val);
 int	queue_delete(void);
 queue_t	queue_first(void);
@@ -41,6 +47,8 @@ int queue_insert(queue_t val)
 	newnode->val = val;
 	// tail insert
 	newnode->next = NULL;
+	
+	DEBUG("newnode: %p, %d\n", newnode, newnode->val);	
 	
 	if(!header) {
 		header = rear = newnode;
@@ -109,7 +117,8 @@ void queue_print(void)
 {
 	sll_t *tmp = header;
 	while(tmp) {
-		fprintf(stdout, "%d ", header->val);
+		DEBUG(stdout, "%p--%d ", header, header->val);
+		fprintf(stdout, "%d ", tmp->val);
 		tmp = tmp->next;
 	}
 	fprintf(stdout, "\n");
@@ -140,4 +149,6 @@ void main(void)
 	printf("[queue] empty: %d, full: %d, length:%d\n", queue_isempty(), queue_isfull(), queue_length());
 	printf("[queue] first: %d\n", queue_first());
 
+	queue_destroy();
+	printf("[queue] empty: %d, full: %d, length:%d\n", queue_isempty(), queue_isfull(), queue_length());
 }
